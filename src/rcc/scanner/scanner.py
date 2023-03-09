@@ -108,7 +108,9 @@ class Scanner:
         index = self.index
         line, column = self.line, self.column
 
-        while self.char != "" and (self.is_letter() or self.is_digit() or self.char == '_'):
+        while self.char != "" and (
+            self.is_letter() or self.is_digit() or self.char == '_'
+        ):
             self.next()
 
         id: str = self.input[index:self.index]
@@ -123,7 +125,7 @@ class Scanner:
         while self.char != "" and (self.is_digit() or self.char == '.'):
             if self.char == '.':
                 is_float = True
-                
+
             self.next()
 
         number: str = self.input[index:self.index]
@@ -151,7 +153,12 @@ class Scanner:
         char_1: str = self.char
         self.next()
 
-        if char_1 + self.char in ["++", "--", "+=", "-=", "*=", "/=", "%=", "==", "!=", "||", "&&", "<=", ">="]:
+        if char_1 + self.char in [
+            "++", "--", "+=", "-=", 
+            "*=", "/=", "%=", "==", 
+            "!=", "||", "&&", "<=", 
+            ">="
+        ]:
             char = self.char
             self.next()
 
