@@ -1,7 +1,7 @@
 .idea
 .fleet
 .vscode
+.ruff_cache
 
-# Added by cargo
-
-/target
+__pycache__/
+main.py
