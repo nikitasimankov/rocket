@@ -43,16 +43,16 @@ class Expression(Node):
     expression_type: ExpressionType
 
 @dataclass
-class LiteralNode(Expression):
+class Literal(Expression):
     literal_kind: TokenType
     literal_value: str
 
 @dataclass
-class VariableAccessNode(Expression):
+class VarAccess(Expression):
     variable_name: str
 
 @dataclass
-class VariableDeclarationNode(Statement):
+class VarDeclaration(Statement):
     variable_name: str
     variable_data_type: DataType
     variable_data_type_raw: str

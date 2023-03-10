@@ -10,9 +10,9 @@ from src.rcc.ast.ast import (
     Expression,
     ExpressionType,
 
-    LiteralNode,
-    VariableAccessNode,
-    VariableDeclarationNode
+    Literal,
+    VarAccess,
+    VarDeclaration
 )
 
 class Parser:
@@ -49,7 +49,7 @@ class Parser:
         if self.token.type in [TokenType.Int, TokenType.Float, TokenType.String]:
             token: Token = self.token
             self.next()
-            return LiteralNode(
+            return Literal(
                 token.position,
                 NodeType.Expression,
                 ExpressionType.Literal,
@@ -59,7 +59,7 @@ class Parser:
         elif self.token.matches_type(TokenType.Id):
             token: Token = self.token
             self.next()
-            return VariableAccessNode(
+            return VarAccess(
                 token.position,
                 NodeType.Expression,
                 ExpressionType.VariableAccess,
@@ -94,7 +94,7 @@ class Parser:
 
         variable_value_expr = self.parse_expression()
 
-        return VariableDeclarationNode(
+        return VarDeclaration(
             pos,
             NodeType.Statement,
             StatementType.VariableDeclaration,
