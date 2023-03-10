@@ -1,3 +1,4 @@
+from src.rcc.context.context import Context
 from src.rcc.token.token import Token, TokenType
 
 operators: dict = {
@@ -41,6 +42,10 @@ operators: dict = {
     "}": TokenType.RBrace,
 }
 
+keywords: dict = {
+    "let": TokenType.Let,
+}
+
 class Scanner:
     line: int
     index: int
@@ -48,9 +53,11 @@ class Scanner:
 
     char: str
     input: str
+    ctx: Context
 
-    def __init__(self, input_string: str) -> None:
-        self.input = input_string
+    def __init__(self, ctx: Context) -> None:
+        self.ctx = ctx
+        self.input = ctx.content
 
         self.line = 0
         self.index = 0
@@ -72,7 +79,7 @@ class Scanner:
             elif self.char in ' \t\r\n':
                 self.next()
             else:
-                print(f"Invalid char '{self.char}'")
+                self.ctx.error((self.line, self.column), f"invalid character '{self.char}'")
 
         return tokens
 
@@ -115,7 +122,11 @@ class Scanner:
 
         id: str = self.input[index:self.index]
 
-        return Token(line, column, TokenType.Id, id)
+        try:
+            kw: TokenType = keywords[id]
+            return Token(line, column, kw, id)
+        except KeyError:
+            return Token(line, column, TokenType.Id, id)
 
     def scan_number(self) -> Token:
         is_float = False
@@ -139,10 +150,12 @@ class Scanner:
         index = self.index
         line, column = self.line, self.column
 
+        self.next()
+
         while self.char != "" and self.char != '"':
             self.next()
 
-        string: str = self.input[index:self.index]
+        string: str = self.input[index + 1:self.index]
         self.next() # Skip the closing double quote
 
         return Token(line, column, TokenType.String, string)

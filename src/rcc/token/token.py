@@ -48,6 +48,8 @@ class TokenType(StrEnum):
     LBrace = auto() # {
     RBrace = auto() # }
 
+    # Keywords
+    Let = auto()
 
 class Token:
     type: TokenType
