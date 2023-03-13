@@ -1,1 +1,1 @@
-let message str = test
+let message str = "Hello, World!"

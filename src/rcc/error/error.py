@@ -13,9 +13,12 @@ class Error:
         ansi_reset: str = "\u001b[0m"
         current_dir: str = getcwd().replace("\\", "/")
 
+        path = f"{current_dir}/{self.file}"
+        line, column = self.line + 1, self.column + 1
+
         error_msg = [
             f"{ansi_red}-> ERROR: {self.message}",
-            f"    at {current_dir}/{self.file}:{self.line + 1}:{self.column + 1}{ansi_reset}",
+            f"    at {path}:{line}:{column}{ansi_reset}",
         ]
 
         return "\n".join(error_msg)

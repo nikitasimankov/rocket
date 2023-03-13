@@ -79,7 +79,10 @@ class Scanner:
             elif self.char in ' \t\r\n':
                 self.next()
             else:
-                self.ctx.error((self.line, self.column), f"invalid character '{self.char}'")
+                self.ctx.error(
+                    (self.line, self.column), 
+                    f"invalid character '{self.char}'"
+                )
 
         return tokens
 

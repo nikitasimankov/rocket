@@ -14,10 +14,12 @@ from src.rcc.ast.ast import (
     VarAccess,
     VarDeclaration
 )
+from src.util.symbol_table.symbol_table import SymbolTable
 
 class Parser:
     ctx: Context
     tokens: list[Token]
+    symbol_table: SymbolTable
 
     index: int
     token: Token
@@ -25,6 +27,7 @@ class Parser:
     def __init__(self, ctx: Context, scanner: Scanner) -> None:
         self.ctx = ctx
         self.tokens = scanner.scan()
+        self.symbol_table = SymbolTable()
 
         self.index = 0
         self.token = self.tokens[0]
@@ -56,6 +59,7 @@ class Parser:
                 token.type,
                 token.value,
             )
+        
         elif self.token.matches_type(TokenType.Id):
             token: Token = self.token
             self.next()
@@ -76,25 +80,34 @@ class Parser:
         variable_value_expr: Expression = None
 
         if not self.token.matches_type(TokenType.Id):
-            self.ctx.error(self.token.position, f"invalid identifier '{self.token.value}'")
+            self.ctx.error(
+                self.token.position, 
+                f"invalid identifier '{self.token.value}'"
+            )
         else:
             variable_name = self.token.value
             self.next()
 
         if not self.token.matches_type(TokenType.Id):
-            self.ctx.error(self.token.position, f"invalid data type '{self.token.value}'")
+            self.ctx.error(
+                self.token.position, 
+                f"invalid data type '{self.token.value}'"
+            )
         else:
             (variable_data_type, variable_data_type_raw) = self.parse_data_type()
             self.next()
 
         if not self.token.matches_type(TokenType.Assign):
-            self.ctx.error(self.token.position, f"expected '=', but got '{self.token.value}'")
+            self.ctx.error(
+                self.token.position, 
+                f"expected '=', but got '{self.token.value}'"
+            )
         else:
             self.next()
 
         variable_value_expr = self.parse_expression()
 
-        return VarDeclaration(
+        var_decl: VarDeclaration = VarDeclaration(
             pos,
             NodeType.Statement,
             StatementType.VariableDeclaration,
@@ -103,6 +116,15 @@ class Parser:
             variable_data_type_raw,
             variable_value_expr,
         )
+
+        self.symbol_table.new_symbol(
+            var_decl.variable_name, 
+            var_decl.variable_data_type, 
+            var_decl.variable_data_type_raw, 
+            var_decl.variable_value_expr
+        )
+
+        return var_decl 
 
     def parse_data_type(self) -> tuple[DataType, str]:
         match self.token.value:
